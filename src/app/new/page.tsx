@@ -15,9 +15,9 @@ export default async function NewConfessionPage(){
 
 
     return(
-        <main>
-            <h1>Nouvelle confession</h1>
-            <p>Liberez votre conscience de developpeur !</p>
+        <main className="max-w-2xl mx-auto p-4">
+            <h1 className="text-2xl font-bold mb-6 text-gray-100">Nouvelle confession</h1>
+            <p className="mb-4 text-gray-300">Liberez votre conscience de developpeur !</p>
             <ConfessionForm />
         </main>
     )

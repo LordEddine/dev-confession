@@ -42,50 +42,82 @@ export function ConfessionCard({ confession, currentUserId }: Props){
         }finally{
             return;
         }
-    }                  
+    }    
+              
+    function partagerSurTwitter(){
+        const maxLength = 200;
+        const truncatedContent = confession.content.length > maxLength 
+            ? confession.content.substring(0,maxLength) + "..."
+            : confession.content;
+        const textTweet = `🎭 Confession Dev : \n\n${truncatedContent}\n\n${categoryInfo.icon} #DevConfession #ServiceWeb`
+        const tweetIntentUrl = "https://twitter.com/intent/tweet"
+        const encondedUrl = encodeURIComponent(textTweet);
+        const url = `${tweetIntentUrl}?text=${encondedUrl}`
+
+        window.open(url,"_blank")
+    }
     
     return (
-        <div>
+        <div className="mt-6 bg-gray-800/50 backdrop-blur border border-gray-700 rounded-xl p-6 hover:border-purple-500/50 transition">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                    <span>{categoryInfo.icon}</span>
-                    <span>{categoryInfo.label}</span>
+                    <span className="text-xl">{categoryInfo.icon}</span>
+                    <span className="text-sm text-purple-400">{categoryInfo.label}</span>
                 </div>
-                <time>
+                <time className="text-xs text-gray-500">
                     {formatDistanceToNow(new Date(confession.createdAt), {addSuffix: true , locale: fr})}
                 </time>
             </div>
 
 
 
-            <p>
+            <p className="text-gray-100 text-lg leading-relaxed mb-4 break-words">
                 {confession.content}
             </p>
 
-            <div>
+            <div className="flex items-center gap-2 mb-4 text-sm text-gray-400">
                 {confession.isAnonymous ? 
                 (
                     <>
+                        <span className="text-xl">🎭</span>
                         <span>Dev Anonyme</span>
                     </>
                 )
             : (
                     <>
-                    {confession.author.imageUrl && (<img src={confession.author.imageUrl} alt=" "  /> )}
+                    {confession.author.imageUrl && (<img src={confession.author.imageUrl} alt=" " className="rounded-full w-6 h-6" /> )}
                     <span>{confession.author.username}</span>
                     </>
             )}
             </div>
 
-            <div>
+            <div className="flex items-center gap-2 flex-wrap">
                 {(Object.keys(EMOJI_MAP) as Emoji[]).map((emoji) => {
                     const count = reactionCounts[emoji] || 0;
+                    const hasReacted = userReactions.includes(emoji);
                     return(
-                        <button>
+                        <button 
+                        className={`flex items-center gap-1 px-3 py-2 rounded-full text-sm transition ${
+                            hasReacted
+                            ? "bg-purple-600 text-white"
+                            : "bg-gray-700 hover:bg-gray-600 text-gray-300"
+                        }`} 
+                        onClick={() => handleReaction(emoji)} >
                             <span>{EMOJI_MAP[emoji]}</span>
                             {count > 0  && <span>{count}</span>} 
                         </button>)
                 })}
+
+                <button className="flex items-center gap-1 px-3 py-2 rounded-full text-sm bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white transition ml-auto"
+                        title="Partager sur X/Twitter"
+                        onClick={partagerSurTwitter}>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+                            </svg>
+                    <span>Partager</span>
+                </button>
+
+            
             </div>
         </div>
     )
